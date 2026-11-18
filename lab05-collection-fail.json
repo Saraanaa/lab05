@@ -1,0 +1,9 @@
+{
+  "info":{"name":"Lab05 - Intentional failure demonstration","schema":"https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+  "variable":[{"key":"baseUrl","value":"http://localhost:3000"}],
+  "item":[{"name":"Intentional oracle failure","item":[
+    {"name":"Setup active student", "request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"status\":\"active\",\"coursesTaken\":[]}"},"url":"{{baseUrl}}/students/FAIL_STUDENT"},"event":[{"listen":"test","script":{"exec":["pm.test('setup is OK',()=>pm.expect(pm.response.code).to.eql(200));"]}}]},
+    {"name":"Setup course", "request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"prerequisites\":[]}"},"url":"{{baseUrl}}/courses/FAIL_COURSE"},"event":[{"listen":"test","script":{"exec":["pm.test('setup is OK',()=>pm.expect(pm.response.code).to.eql(200));"]}}]},
+    {"name":"Wrong expected status (should fail)", "request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"studentID\":\"FAIL_STUDENT\",\"courseID\":\"FAIL_COURSE\"}"},"url":"{{baseUrl}}/registrations"},"event":[{"listen":"test","script":{"exec":["pm.test('intentional wrong oracle: expected 200',()=>pm.expect(pm.response.code).to.eql(200));"]}}]}
+  ]}]
+}

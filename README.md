@@ -13,6 +13,8 @@ newman -v
 node server.js
 ```
 
+Шалгасан хувилбарын гаралт: `node -v` → `v22.19.0`, `newman -v` → `6.2.2`.
+
 Сервер `http://localhost:3000` дээр асна. Өөр terminal-оос:
 
 ```powershell

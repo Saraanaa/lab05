@@ -94,3 +94,10 @@ $LASTEXITCODE # 1; ECONNREFUSED
 ## 5. Нэмэлт AI өнцөг
 
 AI-д ижил API-ийн сонголтуудыг ангилуулбал идэвхтэй/идэвхгүй/байхгүй оюутан, байгаа/байхгүй хичээл, prerequisite-ийн төлөвүүдийг зөв санал болгоно. Мөн талбар дутуу болон буруу JSON гэсэн input-format ангиллыг нэмж сануулж чадна. Гэхдээ AI-ийн санал анхандаа `studentID`-ийн тэмдэгтийн хэлбэр зэрэг синтаксийн ангиллыг тусад нь авч үзээгүй. Үүнийг төлөөлөх утгын хүснэгтэд нэмэх шаардлагатай. AI-ийн oracle-уудын status ба `result` хослол зөв байсан ч `registrationID`-г яг тогтмол тоотой харьцуулах эрсдэл гарч болно. Иймээс энэ collection-д ID нь тоо мөн эсэхийг шалгасан. Эцсийн сонголтыг server.js-ийн бодит behavior-тэй тулгаж хүн баталгаажуулсан.
+## 6. Шаардлагын шалгалт
+
+- GitHub public repository-д `server.js`, хоёр collection, `results/`, README болон Postman-ийн тохиргоо хадгалагдсан.
+- README-д оюутны нэр/код, `node -v`, `newman -v`, сонголт-утгын хүснэгт, 10 specification, 8–10 өгүүлбэрийн дүгнэлт байна.
+- Үндсэн collection 10 бие даасан кейстэй; кейс бүр өөрийн setup, POST болон status/result oracle-той.
+- PASS: 38 assertion, failed 0, exit code 0. FAIL: 3 assertion, failed 1, exit code 1. DOWN: `ECONNREFUSED`, exit code 1.
+- `registrationID`-ийн тогтмол утгыг шалгаагүй; зөвхөн тоон төрөл болон байгаа эсэхийг шалгасан.

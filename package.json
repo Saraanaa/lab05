@@ -1,0 +1,11 @@
+{
+  "name": "lab05-registration-api-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lecture 5 REST API test-design laboratory",
+  "scripts": {
+    "start": "node server.js",
+    "test:newman": "newman run lab05-collection.json --reporters cli",
+    "test:newman:fail": "newman run lab05-collection-fail.json --reporters cli"
+  }
+}

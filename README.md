@@ -22,6 +22,8 @@ $LASTEXITCODE
 
 `$LASTEXITCODE = 0` бол PASS. Postman-д `lab05-collection.json`-ийг импортлоод collection variable-ийн `baseUrl`-ийг `http://localhost:3000` хэвээр хэрэглэнэ.
 
+Мөн `package.json`-ийн товчилсон script-үүдийг ашиглаж болно: `npm start`, `npm run test:newman`, `npm run test:newman:fail`.
+
 ## 2. Лекц 5-ын таван алхам
 
 ### 1) Бие даан тестлэгдэх функц

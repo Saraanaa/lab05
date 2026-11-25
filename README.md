@@ -15,31 +15,6 @@ node server.js
 
 Шалгасан хувилбарын гаралт: `node -v` → `v22.19.0`, `newman -v` → `6.2.2`.
 
-Энэ ажлын орчинд ажиллуулсан `java -version` гаралт:
-
-```text
-openjdk version "17.0.16" 2025-07-15
-OpenJDK Runtime Environment Temurin-17.0.16+8 (build 17.0.16+8)
-OpenJDK 64-Bit Server VM Temurin-17.0.16+8 (build 17.0.16+8, mixed mode, sharing)
-```
-
-`mvn -version` гаралт:
-
-```text
-Apache Maven 3.10.1 (3afd8084b5629f80b97750906a719879ed4cd283)
-Maven home: C:\Tools\apache-maven-3.10.1
-Java version: 17.0.16, vendor: Eclipse Adoptium, runtime: C:\Tools\jdk-17.0.16+8
-Default locale: en_US, platform encoding: Cp1252, time zone: Asia/Ulaanbaatar
-OS name: "windows 11", version: "10.0", arch: "amd64", family: "windows"
-```
-
-Сервер `http://localhost:3000` дээр асна. Өөр terminal-оос:
-
-```powershell
-newman run lab05-collection.json --reporters cli | Tee-Object -FilePath results/newman-pass.txt
-$LASTEXITCODE
-```
-
 `$LASTEXITCODE = 0` бол PASS. Postman-д `lab05-collection.json`-ийг импортлоод collection variable-ийн `baseUrl`-ийг `http://localhost:3000` хэвээр хэрэглэнэ.
 
 Мөн `package.json`-ийн товчилсон script-үүдийг ашиглаж болно: `npm start`, `npm run test:newman`, `npm run test:newman:fail`.
@@ -74,8 +49,10 @@ $LASTEXITCODE
 | S08 | Хязгаар: coursesTaken хоосон | S08 active, `[]`; C08 requires CS201 | 200 | `ERROR_PREREQUISITES` |
 | S09 | Талбар дутуу | `studentID` байгаа, `courseID` байхгүй | 400 | `ERROR_BAD_REQUEST` |
 | S10 | JSON буруу | тасарсан JSON | 400 | `ERROR_BAD_JSON` |
+| S11 | Давхар алдаа: идэвхгүй оюутан + байхгүй хичээл | S11 inactive; `UNKNOWN11` | 200 | `ERROR_INACTIVE_STUDENT` (түрүүлж шалгана) |
+| S12 | Давхар алдаа: байхгүй оюутан + байхгүй хичээл | `UNKNOWN12`; `UNKNOWN12` | 200 | `ERROR_NO_STUDENT` (түрүүлж шалгана) |
 
-Стратеги нь happy path 3, алдааны ангилал бүрээс дор хаяж 1, мөн boundary 2 кейс ашигласан. Иймээс бодит хэрэгжүүлсэн specification 10 байна.
+Стратеги нь happy path 3, алдааны ангилал бүрээс дор хаяж 1, мөн boundary 2 кейс ашигласан. Иймээс бодит хэрэгжүүлсэн specification 12 байна.
 
 ### 5) Бодит тест кейс
 
@@ -105,22 +82,11 @@ newman run lab05-collection.json --reporters cli 2>&1 | Tee-Object -FilePath res
 $LASTEXITCODE # 1; ECONNREFUSED
 ```
 
-`results/` доторх тоонууд нь Newman-ийн бодит CLI summary-гаас авсан: PASS — 1 iteration, 24 requests, 38 assertions, failed 0, exit code 0; FAIL — 1 iteration, 3 requests, 3 assertions, failed 1, exit code 1; DOWN — 1 iteration, 24 request, бүгд `ECONNREFUSED`, exit code 1. DOWN нь oracle-ийн алдаа биш, сервер ажиллахгүй байгаатай холбоотой interface/network алдаа юм.
-
-### Mutation тестийн үр дүн
-
-Мөн тайлагнагдсан Java mutation туршилтаар 23 тест ажиллаж, хоёр тест мутацид унасан:
-
-| Тест | Үр дүн |
-|---|---|
-| `ninetyIsExactlyA` | `expected: <A> but was: <B>` |
-| `letterGradeBoundaries` | `expected: <A> but was: <B>` |
-
-`ninetyIsExactlyA` нь нэрнээсээ харахад 90 онооны яг заагт A үнэлгээ гарах эсэхийг шалгаж байгаа тул хамгийн сонирхолтой кейс байлаа. Мутацид энэ шалгалт A-ийн оронд B гэж буцсан нь заагийн нөхцөл өөрчлөгдөхөд үр дүн шууд зөрж байгааг харуулж байна. `letterGradeBoundaries` нь үнэлгээний заагуудыг шалгаж, дундаж онооны жишээнүүдэд илрэхгүй байж болох алдааг барих зорилготой. Хоёр тестийн ижил хүлээгдсэн/бодит үр дүн нь A ба B-ийн ангиллын заагт төвлөрсөн алдаа байсныг харуулна. Энэ нь Ньюман тестийн үр дүнгээс тусдаа mutation туршилтын тайлан юм. Харин эндхийн REST API-ийн PASS тайланд 24 хүсэлт, 38 assertion ажиллаж, алдаа гараагүй.
+`results/` доторх тоонууд нь Newman-ийн бодит CLI summary-гаас авсан: PASS — 1 iteration, 27 requests, 43 assertions, failed 0, exit code 0; FAIL — 1 iteration, 27 requests, 43 assertions, failed 1, exit code 1 (зөвхөн нэг буруу oracle); DOWN — 1 iteration, 27 requests, бүгд `ECONNREFUSED`, exit code 1. DOWN нь oracle-ийн алдаа биш, сервер ажиллахгүй байгаатай холбоотой interface/network алдаа юм.
 
 ## 4. Дүгнэлт
 
-Энэ ажлын хамгийн их бодол шаардсан алхам нь сонголтуудыг зөв ангилах байлаа. Нэг л алдааны жишээ авахад идэвхгүй оюутан, байхгүй оюутан, prerequisite дутуу гэсэн ялгаатай бизнес дүрмүүд орхигдоно. Төлөөлөх утгыг ангилал бүрээс сонгосноор 10 кейсээр үндсэн шийдвэрүүдийг хамруулсан. Boundary кейсүүд болох хоосон prerequisite болон хоосон `coursesTaken` нь массивын логикийн алдааг илрүүлэхэд хэрэгтэй. Спецификацид HTTP status болон `result`-ийг хамтад нь oracle болгосон тул 200 дээр буцсан бизнесийн алдааг амжилт гэж андуурахгүй. Тест бүр setup-аа өөрөө хийдэг учир collection-ийн дараалал өөрчлөгдөхөд тогтвортой. Newman-ийн exit code нь CI quality gate болгон ашиглагдана. Харин DOWN үр дүн нь API ажиллахгүй үеийн орчны алдаа бөгөөд серверийн бизнес oracle-ийн алдаа биш. Бодит API дээр тест дизайн нь зөвхөн request илгээхээс илүүтэй зөв ангилал, зөв төлөөлөх утга, хэмжигдэхүйц хүлээлт гурвыг холбох ажил юм.
+Энэ ажлын хамгийн их бодол шаардсан алхам нь сонголтуудыг зөв ангилах байлаа. Нэг л алдааны жишээ авахад идэвхгүй оюутан, байхгүй оюутан, prerequisite дутуу гэсэн ялгаатай бизнес дүрмүүд орхигдоно. Төлөөлөх утгыг ангилал бүрээс сонгосноор 12 кейсээр үндсэн шийдвэрүүдийг хамруулсан. Boundary кейсүүд болох хоосон prerequisite болон хоосон `coursesTaken` нь массивын логикийн алдааг илрүүлэхэд хэрэгтэй. Спецификацид HTTP status болон `result`-ийг хамтад нь oracle болгосон тул 200 дээр буцсан бизнесийн алдааг амжилт гэж андуурахгүй. Тест бүр setup-аа өөрөө хийдэг учир collection-ийн дараалал өөрчлөгдөхөд тогтвортой. Newman-ийн exit code нь CI quality gate болгон ашиглагдана. Харин DOWN үр дүн нь API ажиллахгүй үеийн орчны алдаа бөгөөд серверийн бизнес oracle-ийн алдаа биш. Бодит API дээр тест дизайн нь зөвхөн request илгээхээс илүүтэй зөв ангилал, зөв төлөөлөх утга, хэмжигдэхүйц хүлээлт гурвыг холбох ажил юм.
 
 ## 5. Нэмэлт AI өнцөг
 
@@ -129,7 +95,7 @@ AI-д ижил API-ийн сонголтуудыг ангилуулбал идэ
 ## 6. Шаардлагын шалгалт
 
 - GitHub public repository-д `server.js`, хоёр collection, `results/`, README болон Postman-ийн тохиргоо хадгалагдсан.
-- README-д оюутны нэр/код, `node -v`, `newman -v`, локал `java -version`/`mvn -version` гаралт, mutation тестийн үр дүн, сонголт-утгын хүснэгт, 10 specification, 8–10 өгүүлбэрийн дүгнэлт байна.
-- Үндсэн collection 10 бие даасан кейстэй; кейс бүр өөрийн setup, POST болон status/result oracle-той.
-- PASS: 38 assertion, failed 0, exit code 0. FAIL: 3 assertion, failed 1, exit code 1. DOWN: `ECONNREFUSED`, exit code 1.
+- README-д оюутны нэр/код, `node -v`, `newman -v`, сонголт-утгын хүснэгт, 12 specification, 8–10 өгүүлбэрийн дүгнэлт байна.
+- Үндсэн collection 12 бие даасан кейстэй; кейс бүр өөрийн setup, POST болон status/result oracle-той.
+- PASS: 43 assertion, failed 0, exit code 0. FAIL: 43 assertion, failed 1 (зориудын нэг буруу oracle), exit code 1. DOWN: `ECONNREFUSED`, exit code 1.
 - `registrationID`-ийн тогтмол утгыг шалгаагүй; зөвхөн тоон төрөл болон байгаа эсэхийг шалгасан.
